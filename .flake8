@@ -1,0 +1,15 @@
+[flake8]
+show-source = True
+statistics = False
+doctests = True
+enable-extensions = G
+
+# Plugins:
+accept-encodings = utf-8
+max-complexity = 10
+max-line-length = 120
+quotes = single
+max-imports = 14
+
+# Exclude some pydoctest checks globally:
+# ignore = D100, D104, D401, W504, RST303, RST304
