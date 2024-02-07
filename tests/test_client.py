@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 
-from aiostatsd.basic_metrics import CounterMetric
 from aiostatsd.client import StatsdClient, StatsdClientBase
+from aiostatsd.metrics.basic import CounterMetric
 
 from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 

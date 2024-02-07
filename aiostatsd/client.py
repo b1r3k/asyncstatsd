@@ -4,7 +4,7 @@ from datetime import timedelta
 from time import perf_counter as time_now
 from typing import Union
 
-from .basic_metrics import (
+from .metrics.basic import (
     CounterMetric,
     GaugeMetric,
     SetMetric,

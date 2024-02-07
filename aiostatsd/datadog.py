@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Dict
 
 from .client import AbstractStatsdClient, StatsdClientBase
-from .datadog_metrics import (
+from .metrics.datadog import (
     DatadogCounterMetric,
     DatadogGaugeMetric,
     DatadogSetMetric,
