@@ -1,4 +1,3 @@
-import asyncio
 from unittest import IsolatedAsyncioTestCase
 
 from aiostatsd.client import StatsdClient, StatsdClientBase
@@ -18,14 +17,14 @@ class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMo
         await self.client.connect()
         self.addAsyncCleanup(self.client.close)
 
-    async def test_sending_when_rate_fits(self):
+    def test_sending_when_rate_fits(self):
         counter = CounterMetric("test", rate=0.5)
-        await self.client.send(counter)
+        self.client.send(counter)
         self.client._transport.sendto.assert_called_once_with(b"test:1|c|@0.5")
 
-    async def test_sending_when_rate_does_not_fit(self):
+    def test_sending_when_rate_does_not_fit(self):
         counter = CounterMetric("test", rate=0.4)
-        await self.client.send(counter)
+        self.client.send(counter)
         self.client._transport.sendto.assert_not_called()
 
 
@@ -41,28 +40,28 @@ class TestStatsdClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMi
         await self.client.connect()
         self.addAsyncCleanup(self.client.close)
 
-    async def test_increment(self):
-        await self.client.incr("test")
+    def test_increment(self):
+        self.client.incr("test")
         self.client._transport.sendto.assert_called_once_with(b"test:1|c")
 
-    async def test_decrement(self):
-        await self.client.decr("test")
+    def test_decrement(self):
+        self.client.decr("test")
         self.client._transport.sendto.assert_called_once_with(b"test:-1|c")
 
-    async def test_gauge(self):
-        await self.client.gauge("test", 30)
+    def test_gauge(self):
+        self.client.gauge("test", 30)
         self.client._transport.sendto.assert_called_once_with(b"test:30|g")
 
-    async def test_set(self):
-        await self.client.set("test", 30)
+    def test_set(self):
+        self.client.set("test", 30)
         self.client._transport.sendto.assert_called_once_with(b"test:30|s")
 
-    async def test_timing(self):
-        await self.client.timing("test", 100)
+    def test_timing(self):
+        self.client.timing("test", 100)
         self.client._transport.sendto.assert_called_once_with(b"test:100.000000|ms")
 
-    async def test_timing_with_rate(self):
+    def test_timing_with_rate(self):
         self.timenow_mock.side_effect = [0.1, 0.2]
-        async with self.client.timer("test", rate=0.5):
-            await asyncio.sleep(0.1)
+        with self.client.timer("test", rate=0.5):
+            pass
         self.client._transport.sendto.assert_called_once_with(b"test:100.000000|ms|@0.5")
