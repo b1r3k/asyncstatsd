@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from aiostatsd.datadog_metrics import DatadogCounterMetric
+from aiostatsd.metrics.datadog import DatadogCounterMetric
 
 
 class TestCounterMetric(TestCase):
