@@ -21,9 +21,6 @@ flake8 = "^6.0.0"
 mypy = "^1.0.1"
 isort = "^5.12.0"
 
-[tool.poetry.scripts]
-app-cli = 'aiostatsd:main.cli'
-
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "-ra -q"
