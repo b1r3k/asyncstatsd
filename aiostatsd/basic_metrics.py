@@ -38,11 +38,7 @@ class CounterMetric(StatsdMetric):
     value: int = field(default=1)
 
 
-@dataclass
-class GaugeMetric(StatsdMetric):
-    unit: str = field(default="g", init=False)
-    delta: bool = field(default=False)
-
+class GaugeMetricBase:
     def get_value(self) -> str:
         value = self.value
         if self.delta:
@@ -52,18 +48,26 @@ class GaugeMetric(StatsdMetric):
 
 
 @dataclass
+class GaugeMetric(GaugeMetricBase, StatsdMetric):
+    unit: str = field(default="g", init=False)
+    delta: bool = field(default=False)
+
+
+@dataclass
 class SetMetric(StatsdMetric):
     unit: str = field(default="s", init=False)
 
 
-@dataclass
-class TimingMetric(StatsdMetric):
-    value: Union[float, timedelta]
-    unit: str = field(default="ms", init=False)
-
+class TimingMetricBase:
     def get_value(self) -> str:
         delta = self.value
         if isinstance(delta, timedelta):
             # Convert timedelta to number of milliseconds.
             delta = delta.total_seconds() * 1000.0
         return f"{delta:.6f}"
+
+
+@dataclass
+class TimingMetric(TimingMetricBase, StatsdMetric):
+    value: Union[float, timedelta]
+    unit: str = field(default="ms", init=False)

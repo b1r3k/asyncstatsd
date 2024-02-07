@@ -4,7 +4,13 @@ from datetime import timedelta
 from time import perf_counter as time_now
 from typing import Union
 
-from .metrics import CounterMetric, GaugeMetric, SetMetric, StatsdMetric, TimingMetric
+from .basic_metrics import (
+    CounterMetric,
+    GaugeMetric,
+    SetMetric,
+    StatsdMetric,
+    TimingMetric,
+)
 from .udp import UDPClient
 
 
@@ -17,7 +23,27 @@ class StatsdClientBase(UDPClient):
         super().send(serialized)
 
 
-class StatsdClient(StatsdClientBase):
+class AbstractStatsdClient:
+    def timing(self, stat, delta: Union[float, timedelta], rate=1):
+        raise NotImplementedError
+
+    def timer(self, stat, rate=1):
+        raise NotImplementedError
+
+    def incr(self, stat, count=1, rate=1):
+        raise NotImplementedError
+
+    def decr(self, stat, count=1, rate=1):
+        raise NotImplementedError
+
+    def gauge(self, stat, value, rate=1, delta=False):
+        raise NotImplementedError
+
+    def set(self, stat, value, rate=1):
+        raise NotImplementedError
+
+
+class StatsdClient(AbstractStatsdClient, StatsdClientBase):
     def timing(self, stat, delta: Union[float, timedelta], rate=1):
         """Send new timing information. `delta` is in milliseconds or datetime.timedelta"""
         self.send(TimingMetric(stat, delta, rate=rate))

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from aiostatsd.metrics import CounterMetric, GaugeMetric, SetMetric, TimingMetric
+from aiostatsd.basic_metrics import CounterMetric, GaugeMetric, SetMetric, TimingMetric
 
 
 class TestCounterMetric(TestCase):
