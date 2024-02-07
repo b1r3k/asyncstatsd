@@ -3,12 +3,12 @@ from datetime import timedelta
 from typing import Optional, Union
 
 
-class Metric:
-    def __init__(self, name: str, value, unit: str, rate: float = 1.0):
-        self.name = name
-        self.value = value
-        self.rate = rate
-        self.unit = unit
+@dataclass
+class StatsdMetric:
+    name: str
+    value: int
+    unit: str
+    rate: float = field(default=1.0)
 
     def get_value(self) -> str:
         return f"{self.value}"
@@ -19,17 +19,6 @@ class Metric:
         if self.rate < 1:
             serialized = f"{serialized}|@{self.rate}"
         return serialized
-
-
-@dataclass
-class StatsdMetric(Metric):
-    name: str
-    value: int
-    unit: str
-    rate: float = field(default=1.0)
-
-    def __post_init__(self):
-        super().__init__(self.name, self.value, self.unit, self.rate)
 
 
 @dataclass
