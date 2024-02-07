@@ -52,10 +52,8 @@ class UDPClient:
         )
         self._on_con_lost.add_done_callback(lambda f: self._close())
 
-    async def send(self, data):
+    def send(self, data):
         encoded = data.encode("ascii")
         if len(encoded) > self._maxudpsize:
             raise ValueError("Data exceeds max UDP size")
-        if self._transport is None:
-            await self.connect()
         self._transport.sendto(encoded)
