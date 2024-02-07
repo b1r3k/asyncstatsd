@@ -1,13 +1,13 @@
 from datetime import timedelta
 from typing import Dict
 
-from .client import AbstractStatsdClient, StatsdClientBase
-from .metrics.datadog import (
+from ..metrics.datadog import (
     DatadogCounterMetric,
     DatadogGaugeMetric,
     DatadogSetMetric,
     DatadogTimingMetric,
 )
+from .basic import AbstractStatsdClient, StatsdClientBase
 
 
 class DatadogClient(AbstractStatsdClient, StatsdClientBase):

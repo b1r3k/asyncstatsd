@@ -1,6 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
 
-from aiostatsd.datadog import DatadogClient
+from aiostatsd.client import DatadogClient
 
 from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 
@@ -8,8 +8,6 @@ from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 class TestDatadogClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin, TimenowMockMixin):
     def setUp(self):
         self._create_loop_mock()
-        self._create_random_mock("aiostatsd.client.random")
-        self._create_timenow_mock("aiostatsd.client.time_now")
 
     async def asyncSetUp(self):
         self.client = DatadogClient("localhost", 8125)
