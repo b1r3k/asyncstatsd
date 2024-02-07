@@ -1,6 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
 
-from aiostatsd.udp import UDPClient
+from aiostatsd.client.udp import UDPClient
 
 from .testing import EventLoopMockMixin
 
