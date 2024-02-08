@@ -9,7 +9,7 @@
 ### Pure statsd
 
 ```python
-from aiostatsd.client import StatsdClient
+from asyncstatsd.client import StatsdClient
 
 
 def foo(statsd):
@@ -34,7 +34,7 @@ async def main():
 ### Statsd extended with Datadog tags
 
 ```python
-from aiostatsd.client import DatadogClient
+from asyncstatsd.client import DatadogClient
 
 
 def foo(statsd):

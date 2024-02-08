@@ -1,6 +1,6 @@
 from unittest import IsolatedAsyncioTestCase
 
-from aiostatsd.client import DatadogClient
+from asyncstatsd.client import DatadogClient
 
 from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 

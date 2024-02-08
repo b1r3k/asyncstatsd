@@ -1,7 +1,7 @@
 from unittest import IsolatedAsyncioTestCase
 
-from aiostatsd.client import StatsdClient, StatsdClientBase
-from aiostatsd.metrics.basic import CounterMetric
+from asyncstatsd.client import StatsdClient, StatsdClientBase
+from asyncstatsd.metrics.basic import CounterMetric
 
 from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 
@@ -9,7 +9,7 @@ from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin):
     def setUp(self):
         self._create_loop_mock()
-        self._create_random_mock("aiostatsd.client.basic.random")
+        self._create_random_mock("asyncstatsd.client.basic.random")
 
     async def asyncSetUp(self):
         self.client = StatsdClientBase("localhost", 8125)
@@ -31,8 +31,8 @@ class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMo
 class TestStatsdClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin, TimenowMockMixin):
     def setUp(self):
         self._create_loop_mock()
-        self._create_random_mock("aiostatsd.client.basic.random")
-        self._create_timenow_mock("aiostatsd.client.basic.time_now")
+        self._create_random_mock("asyncstatsd.client.basic.random")
+        self._create_timenow_mock("asyncstatsd.client.basic.time_now")
 
     async def asyncSetUp(self):
         self.client = StatsdClient("localhost", 8125)

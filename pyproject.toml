@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "aiostatsd"
+name = "asyncstatsd"
 version = "1.0.0a0"
 description = ""
 authors = ["Lukasz Jachym <lukasz.jachym@gmail.com>"]
 readme = "README.md"
-packages = [{include = "aiostatsd"}]
+packages = [{include = "asyncstatsd"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -38,4 +38,4 @@ warn_unused_configs = true
 
 [tool.isort]
 profile = "black"
-src_paths = ["aiostatsd", "tests"]
+src_paths = ["asyncstatsd", "tests"]
