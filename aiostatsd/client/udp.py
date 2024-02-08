@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from abc import ABC, abstractmethod
 
 logger = logging.getLogger()
 
@@ -22,15 +23,18 @@ class StatsdProtocol(asyncio.DatagramProtocol):
         logger.warning("Statsd UDP connection lost")
 
 
-class Client:
+class Client(ABC):
+    @abstractmethod
     async def connect(self):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     async def send(self, data):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def close(self):
-        raise NotImplementedError
+        pass
 
 
 class UDPClient:

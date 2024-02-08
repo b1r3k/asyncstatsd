@@ -1,5 +1,6 @@
 import contextlib
 import random
+from abc import ABC, abstractmethod
 from datetime import timedelta
 from time import perf_counter as time_now
 
@@ -22,24 +23,36 @@ class StatsdClientBase(UDPClient):
         super().send(serialized)
 
 
-class AbstractStatsdClient:
+class AbstractStatsdClient(ABC):
+    @abstractmethod
     def timing(self, stat, delta: float | timedelta, rate=1):
-        raise NotImplementedError
+        pass
 
+    @contextlib.contextmanager
     def timer(self, stat, rate=1):
-        raise NotImplementedError
+        """Set a timer value via context manager."""
+        try:
+            start_time = time_now()
+            yield
+        finally:
+            elapsed_time_ms = 1000.0 * (time_now() - start_time)
+            self.timing(stat, elapsed_time_ms, rate=rate)
 
+    @abstractmethod
     def incr(self, stat, count=1, rate=1):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def decr(self, stat, count=1, rate=1):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def gauge(self, stat, value, rate=1, delta=False):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def set(self, stat, value, rate=1):
-        raise NotImplementedError
+        pass
 
 
 class StatsdClient(AbstractStatsdClient, StatsdClientBase):
@@ -62,13 +75,3 @@ class StatsdClient(AbstractStatsdClient, StatsdClientBase):
     def set(self, stat, value, rate=1):
         """Set a set value."""
         self.send(SetMetric(stat, value, rate=rate))
-
-    @contextlib.contextmanager
-    def timer(self, stat, rate=1):
-        """Set a timer value via context manager."""
-        try:
-            start_time = time_now()
-            yield
-        finally:
-            elapsed_time_ms = 1000.0 * (time_now() - start_time)
-            self.send(TimingMetric(stat, elapsed_time_ms, rate=rate))
