@@ -42,10 +42,12 @@ jobs:
         run: python -m poetry config virtualenvs.create false
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: python -m poetry install
+        run: python -m poetry install --with dev
       - name: Lint
-        run: make lint-check
+        run: |
+          python -m poetry run flake8 asyncstatsd
+          python -m poetry run mypy .
       - name: Test
-        run: make test
+        run: python -m poetry run pytest
         env:
           CONTEXT: ${{ runner.os }}-py${{ matrix.python-version }}
