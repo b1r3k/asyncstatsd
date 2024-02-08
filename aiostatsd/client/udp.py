@@ -11,15 +11,15 @@ class StatsdProtocol(asyncio.DatagramProtocol):
 
     def connection_made(self, transport):
         self.transport = transport
-        print("Connection made")
+        logger.debug("Statsd UDP connection established")
 
     def error_received(self, exc):
-        print("Error received:", exc)
+        logger.error("Error received: %s", exc)
 
     def connection_lost(self, exc):
         if self.on_con_lost is not None:
             self.on_con_lost.set_exception(exc)
-        print("Closing transport", exc)
+        logger.warning("Statsd UDP connection lost")
 
 
 class Client:
