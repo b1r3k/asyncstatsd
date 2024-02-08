@@ -1,4 +1,5 @@
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import MagicMock
 
 from asyncstatsd.client import DatadogClient
 
@@ -8,6 +9,7 @@ from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 class TestDatadogClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin, TimenowMockMixin):
     def setUp(self):
         self._create_loop_mock()
+        self.loop_mock.create_datagram_endpoint.return_value = MagicMock(), MagicMock()
 
     async def asyncSetUp(self):
         self.client = DatadogClient("localhost", 8125)

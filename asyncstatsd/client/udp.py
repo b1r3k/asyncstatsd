@@ -18,8 +18,10 @@ class StatsdProtocol(asyncio.DatagramProtocol):
         logger.error("Error received: %s", exc)
 
     def connection_lost(self, exc):
-        if self.on_con_lost is not None:
+        if exc and self.on_con_lost:
             self.on_con_lost.set_exception(exc)
+        elif self.on_con_lost:
+            self.on_con_lost.set_result(True)
         logger.warning("Statsd UDP connection lost")
 
 
@@ -56,7 +58,7 @@ class UDPClient:
         self._transport, _ = await self._loop.create_datagram_endpoint(
             lambda: StatsdProtocol(self._on_con_lost), remote_addr=(self._host, self._port)
         )
-        self._on_con_lost.add_done_callback(lambda f: self._close())
+        self._on_con_lost.add_done_callback(lambda f: self.close())
 
     def send(self, data):
         encoded = data.encode("ascii")

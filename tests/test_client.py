@@ -1,4 +1,5 @@
 from unittest import IsolatedAsyncioTestCase
+from unittest.mock import MagicMock
 
 from asyncstatsd.client import StatsdClient, StatsdClientBase
 from asyncstatsd.metrics.basic import CounterMetric
@@ -9,6 +10,7 @@ from .testing import EventLoopMockMixin, RandomMockMixin, TimenowMockMixin
 class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin):
     def setUp(self):
         self._create_loop_mock()
+        self.loop_mock.create_datagram_endpoint.return_value = MagicMock(), MagicMock()
         self._create_random_mock("asyncstatsd.client.basic.random")
 
     async def asyncSetUp(self):
@@ -31,6 +33,7 @@ class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMo
 class TestStatsdClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin, TimenowMockMixin):
     def setUp(self):
         self._create_loop_mock()
+        self.loop_mock.create_datagram_endpoint.return_value = MagicMock(), MagicMock()
         self._create_random_mock("asyncstatsd.client.basic.random")
         self._create_timenow_mock("asyncstatsd.client.basic.time_now")
 

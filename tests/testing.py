@@ -1,11 +1,10 @@
 from asyncio import AbstractEventLoop
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 
 class EventLoopMockMixin:
     def _create_loop_mock(self):
         self.loop_mock = AsyncMock(spec=AbstractEventLoop)
-        self.loop_mock.create_datagram_endpoint.return_value = MagicMock(), MagicMock()
         p = patch("asyncio.get_event_loop", return_value=self.loop_mock)
         p.start()
         self.addCleanup(p.stop)
