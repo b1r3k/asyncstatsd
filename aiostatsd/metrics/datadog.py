@@ -1,42 +1,42 @@
 from dataclasses import dataclass, field
+from datetime import timedelta
 from typing import Dict
 
-from .basic import GaugeMetricBase, StatsdMetric, TimingMetricBase
+from .basic import GaugeMetricMixin, StatsdMetric, TimingMetricMixin
 
 
 @dataclass
 class DatadogMetric(StatsdMetric):
-    tags: Dict[str, str | int] = field(default_factory=dict)
+    tags: Dict | None = field(default_factory=dict)
 
     def _build_tags(self) -> str:
-        return ",".join(f"{k}:{v}" for k, v in self.tags.items())
+        return ",".join(f"{k}:{v}" for k, v in self.tags.items())  # type: ignore
 
     def serialize(self) -> str:
         serialized = super().serialize()
         tag_string = self._build_tags()
-        serialized = "|#".join(filter(lambda s: s, [serialized, tag_string]))
+        serialized = "|#".join(filter(lambda s: s, [serialized, tag_string]))  # type: ignore
         return serialized
 
 
 @dataclass
 class DatadogCounterMetric(DatadogMetric):
-    unit: str = field(default="c", init=False)
-    value: int = field(default=1)
+    unit: str = "c"
+    value: int = 1
 
 
 @dataclass
-class DatadogGaugeMetric(GaugeMetricBase, DatadogMetric):
-    unit: str = field(default="g", init=False)
-    delta: bool = field(default=False)
+class DatadogGaugeMetric(GaugeMetricMixin, DatadogMetric):
+    unit: str = "g"
+    delta: bool = False
 
 
 @dataclass
 class DatadogSetMetric(DatadogMetric):
-    unit: str = field(default="s", init=False)
+    unit: str = "s"
 
 
 @dataclass
-class DatadogTimingMetric(TimingMetricBase, DatadogMetric):
-    unit: str = field(default="ms", init=False)
-    value: int = field(default=1)
-    delta: bool = field(default=False)
+class DatadogTimingMetric(TimingMetricMixin, DatadogMetric):
+    unit: str = "ms"
+    value: int | float | timedelta

@@ -5,7 +5,7 @@ from datetime import timedelta
 @dataclass
 class StatsdMetric:
     name: str
-    value: int
+    value: int | float | timedelta
     unit: str
     rate: float = field(default=1.0)
 
@@ -22,33 +22,33 @@ class StatsdMetric:
 
 @dataclass
 class CounterMetric(StatsdMetric):
-    unit: str = field(default="c", init=False)
-    value: int = field(default=1)
+    unit: str = "c"
+    value: int = 1
 
 
-class GaugeMetricBase:
+class GaugeMetricMixin:
     def get_value(self) -> str:
-        value = self.value
-        if self.delta:
-            sign = "+" if self.value > 0 else ""
+        value = self.value  # type: ignore
+        if self.delta:  # type: ignore
+            sign = "+" if value > 0 else ""
             value = f"{sign}{value}"
-        return value
+        return str(value)
 
 
 @dataclass
-class GaugeMetric(GaugeMetricBase, StatsdMetric):
-    unit: str = field(default="g", init=False)
-    delta: bool = field(default=False)
+class GaugeMetric(GaugeMetricMixin, StatsdMetric):
+    unit: str = "g"
+    delta: bool = False
 
 
 @dataclass
 class SetMetric(StatsdMetric):
-    unit: str = field(default="s", init=False)
+    unit: str = "s"
 
 
-class TimingMetricBase:
+class TimingMetricMixin:
     def get_value(self) -> str:
-        delta = self.value
+        delta = self.value  # type: ignore
         if isinstance(delta, timedelta):
             # Convert timedelta to number of milliseconds.
             delta = delta.total_seconds() * 1000.0
@@ -56,6 +56,6 @@ class TimingMetricBase:
 
 
 @dataclass
-class TimingMetric(TimingMetricBase, StatsdMetric):
+class TimingMetric(TimingMetricMixin, StatsdMetric):
     value: float | timedelta
-    unit: str = field(default="ms", init=False)
+    unit: str = "ms"
