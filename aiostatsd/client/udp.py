@@ -1,4 +1,7 @@
 import asyncio
+import logging
+
+logger = logging.getLogger()
 
 
 class StatsdProtocol(asyncio.DatagramProtocol):
@@ -54,5 +57,5 @@ class UDPClient:
     def send(self, data):
         encoded = data.encode("ascii")
         if len(encoded) > self._maxudpsize:
-            raise ValueError("Data exceeds max UDP size")
+            logger.warning("Data exceeds max UDP size: %s", data)
         self._transport.sendto(encoded)
