@@ -38,7 +38,7 @@ jobs:
         run: python -m poetry install --with dev
       - name: Lint
         run: |
-          python -m poetry run flake8 asyncstatsd
+          python -m poetry run flake8 aiostatsd
           python -m poetry run mypy .
       - name: Test
         run: python -m poetry run pytest
