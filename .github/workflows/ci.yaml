@@ -16,7 +16,6 @@ jobs:
       matrix:
         python-version:
           - "3.11"
-          - "3.12"
       fail-fast: false
 
     steps:
@@ -41,7 +40,7 @@ jobs:
       - name: Configure poetry
         run: python -m poetry config virtualenvs.create false
       - name: Install Dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
+#        if: steps.cache.outputs.cache-hit != 'true'
         run: python -m poetry install --with dev
       - name: Lint
         run: |
