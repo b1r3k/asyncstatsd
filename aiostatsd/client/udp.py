@@ -1,9 +1,8 @@
 import asyncio
-from typing import Optional
 
 
 class StatsdProtocol(asyncio.DatagramProtocol):
-    def __init__(self, on_con_lost: Optional[asyncio.Future] = None):
+    def __init__(self, on_con_lost: asyncio.Future | None = None):
         self.on_con_lost = on_con_lost
         self.transport = None
 

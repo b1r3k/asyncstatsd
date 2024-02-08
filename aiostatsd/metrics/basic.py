@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from datetime import timedelta
-from typing import Optional, Union
 
 
 @dataclass
@@ -13,7 +12,7 @@ class StatsdMetric:
     def get_value(self) -> str:
         return f"{self.value}"
 
-    def serialize(self) -> Optional[str]:
+    def serialize(self) -> str | None:
         value = self.get_value()
         serialized = f"{self.name}:{value}|{self.unit}"
         if self.rate < 1:
@@ -58,5 +57,5 @@ class TimingMetricBase:
 
 @dataclass
 class TimingMetric(TimingMetricBase, StatsdMetric):
-    value: Union[float, timedelta]
+    value: float | timedelta
     unit: str = field(default="ms", init=False)

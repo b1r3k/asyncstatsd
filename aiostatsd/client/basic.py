@@ -2,7 +2,6 @@ import contextlib
 import random
 from datetime import timedelta
 from time import perf_counter as time_now
-from typing import Union
 
 from ..metrics.basic import (
     CounterMetric,
@@ -24,7 +23,7 @@ class StatsdClientBase(UDPClient):
 
 
 class AbstractStatsdClient:
-    def timing(self, stat, delta: Union[float, timedelta], rate=1):
+    def timing(self, stat, delta: float | timedelta, rate=1):
         raise NotImplementedError
 
     def timer(self, stat, rate=1):
@@ -44,7 +43,7 @@ class AbstractStatsdClient:
 
 
 class StatsdClient(AbstractStatsdClient, StatsdClientBase):
-    def timing(self, stat, delta: Union[float, timedelta], rate=1):
+    def timing(self, stat, delta: float | timedelta, rate=1):
         """Send new timing information. `delta` is in milliseconds or datetime.timedelta"""
         self.send(TimingMetric(stat, delta, rate=rate))
 
