@@ -40,7 +40,7 @@ class Client(ABC):
 
 
 class UDPClient:
-    def __init__(self, host, port, maxudpsize=512):
+    def __init__(self, host, port, *, maxudpsize=512):
         self._host = host
         self._port = port
         self._maxudpsize = maxudpsize

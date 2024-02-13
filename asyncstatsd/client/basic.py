@@ -15,8 +15,12 @@ from .udp import UDPClient
 
 
 class StatsdClientBase(UDPClient):
+    def __init__(self, host, port, *, maxudpsize=512, prefix: str = ""):
+        super().__init__(host, port, maxudpsize=maxudpsize)
+        self._prefix = prefix
+
     def send(self, data: StatsdMetric):
-        serialized = data.serialize()
+        serialized = "".join([self._prefix, data.serialize()])  # type: ignore
         if data.rate < 1:
             if random.random() > data.rate:
                 return

@@ -30,6 +30,24 @@ class TestStatsdClientBase(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMo
         self.client._transport.sendto.assert_not_called()
 
 
+class TestStatsdClientPrefix(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin):
+    def setUp(self):
+        self._create_loop_mock()
+        self.loop_mock.create_datagram_endpoint.return_value = MagicMock(), MagicMock()
+        self._create_random_mock("asyncstatsd.client.basic.random")
+
+    async def asyncSetUp(self):
+        self.client = StatsdClientBase("localhost", 8125, prefix="prefix.")
+        self.addCleanup(self.client.close)
+        await self.client.connect()
+        self.addAsyncCleanup(self.client.close)
+
+    def test_sending_with_prefix(self):
+        counter = CounterMetric("test")
+        self.client.send(counter)
+        self.client._transport.sendto.assert_called_once_with(b"prefix.test:1|c")
+
+
 class TestStatsdClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockMixin, TimenowMockMixin):
     def setUp(self):
         self._create_loop_mock()
