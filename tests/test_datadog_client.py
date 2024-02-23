@@ -29,6 +29,18 @@ class TestDatadogClient(IsolatedAsyncioTestCase, EventLoopMockMixin, RandomMockM
         self.client.gauge("test", 30, tags=dict(test_tag="test"))
         self.client._transport.sendto.assert_called_once_with(b"test:30|g|#test_tag:test")
 
+    def test_gauge_delta(self):
+        self.client.gauge("test", 30, delta=True, tags=dict(test_tag="test"))
+        self.client._transport.sendto.assert_called_once_with(b"test:+30|g|#test_tag:test")
+
+    def test_gauge_rate(self):
+        self.client.gauge("test", 30, 1.0, tags=dict(test_tag="test"))
+        self.client._transport.sendto.assert_called_once_with(b"test:30|g|#test_tag:test")
+
+    def test_gauge_rate_delta(self):
+        self.client.gauge("test", 30, 1.0, delta=True, tags=dict(test_tag="test"))
+        self.client._transport.sendto.assert_called_once_with(b"test:+30|g|#test_tag:test")
+
     def test_set(self):
         self.client.set("test", 30, tags=dict(test_tag="test"))
         self.client._transport.sendto.assert_called_once_with(b"test:30|s|#test_tag:test")

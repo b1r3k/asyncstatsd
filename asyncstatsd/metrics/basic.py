@@ -12,7 +12,7 @@ class StatsdMetric:
     def get_value(self) -> str:
         return f"{self.value}"
 
-    def serialize(self) -> str | None:
+    def serialize(self) -> str:
         value = self.get_value()
         serialized = f"{self.name}:{value}|{self.unit}"
         if self.rate < 1:

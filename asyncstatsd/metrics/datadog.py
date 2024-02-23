@@ -7,15 +7,15 @@ from .basic import GaugeMetricMixin, StatsdMetric, TimingMetricMixin
 
 @dataclass
 class DatadogMetric(StatsdMetric):
-    tags: Dict | None = field(default_factory=dict)
+    tags: Dict = field(default_factory=dict)
 
     def _build_tags(self) -> str:
-        return ",".join(f"{k}:{v}" for k, v in self.tags.items())  # type: ignore
+        return ",".join(f"{k}:{v}" for k, v in self.tags.items())
 
     def serialize(self) -> str:
         serialized = super().serialize()
         tag_string = self._build_tags()
-        serialized = "|#".join(filter(lambda s: s, [serialized, tag_string]))  # type: ignore
+        serialized = "|#".join(filter(lambda s: s, [serialized, tag_string]))
         return serialized
 
 

@@ -51,7 +51,7 @@ class AbstractStatsdClient(ABC):
         pass
 
     @abstractmethod
-    def gauge(self, stat, value, rate=1, delta=False):
+    def gauge(self, stat, value, rate=1, *, delta=False):
         pass
 
     @abstractmethod
@@ -72,7 +72,7 @@ class StatsdClient(AbstractStatsdClient, StatsdClientBase):
         """Decrement a stat by `count`."""
         self.incr(stat, -count, rate=rate)
 
-    def gauge(self, stat, value, rate=1, delta=False):
+    def gauge(self, stat, value, rate=1, *, delta=False):
         """Set a gauge value."""
         self.send(GaugeMetric(stat, value, rate=rate))
 
