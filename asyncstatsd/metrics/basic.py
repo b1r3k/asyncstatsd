@@ -9,11 +9,11 @@ class StatsdMetric:
     unit: str
     rate: float = field(default=1.0)
 
-    def get_value(self) -> str:
+    def get_formatted_value(self) -> str:
         return f"{self.value}"
 
     def serialize(self) -> str:
-        value = self.get_value()
+        value = self.get_formatted_value()
         serialized = f"{self.name}:{value}|{self.unit}"
         if self.rate < 1:
             serialized = f"{serialized}|@{self.rate}"
@@ -27,7 +27,7 @@ class CounterMetric(StatsdMetric):
 
 
 class GaugeMetricMixin:
-    def get_value(self) -> str:
+    def get_formatted_value(self) -> str:
         value = self.value  # type: ignore
         if self.delta:  # type: ignore
             sign = "+" if value > 0 else ""
@@ -47,7 +47,7 @@ class SetMetric(StatsdMetric):
 
 
 class TimingMetricMixin:
-    def get_value(self) -> str:
+    def get_formatted_value(self) -> str:
         delta = self.value  # type: ignore
         if isinstance(delta, timedelta):
             # Convert timedelta to number of milliseconds.
