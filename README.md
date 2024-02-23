@@ -1,48 +1,95 @@
-# Modern python app boilerplate
+# asyncstatsd
 
-Included in this boilerplate:
+## Installation
 
- - pyenv for python version management
- - [poetry](https://python-poetry.org/) for dependency management integrated with pyenv
- - [pre-commit](https://pre-commit.com/) for linting and formatting
- - [pytest](https://docs.pytest.org/en/stable/) for testing
- - [black]() for formatting
- - [flake8]() for linting
- - [isort]() for sorting imports
- - [mypy]() for static type checking
- - virtualenv created by poetry resides in `.venv` folder
+    $ pip install asyncstatsd
+
+## Usage
+
+### Pure statsd
+
+```python
+import asyncio
+from asyncstatsd.client import StatsdClient
 
 
-## How to start
+def foo(statsd):
+    statsd.incr('some.counter')
+    statsd.timing('some.timer', 320)
 
-1. Make sure you have python required interpreter installed in pyenv e.g.
-2. Rename project:
- - Rename app folder to your app name if needed (`mv aiostatsd new_aiostatsd`) and then:
 
-       find ./ -type f -not -path "./.git/*" -exec sed -i 's/aiostatsd/new_aiostatsd/g' {} \;
-       find ./ -type f -not -path "./.git/*" -exec sed -i 's/aiostatsd/new-aiostatsd/g' {} \;
- - or use `make rename NEW_APP_NAME=new_aiostatsd` to do it for you
+async def bar(statsd):
+   statsd.incr('some.counter')
+   statsd.timing('some.timer', 320)
+   with statsd.timer('some.timer'):
+       await asyncio.sleep(1)
 
-3. `make install`
-4. `make test`
-5. Make sure it's working: `poetry run app-cli "Developer"`
-6. Optionally, squeeze history into one commit: `git reset $(git commit-tree HEAD^{tree} -m "Initial commit")`
 
-## Other useful commands
-
- - Check current poetry virtualenv and change it
-
-```bash
-   $ poetry env info
-   $ poetry env list
-   $ poetry env remove /home/PATH/bin/python
-   $ make install
+async def main():
+    client = StatsdClient('localhost', 8125)
+    await client.connect()
+    foo(client)
+    await bar(client)
 ```
 
- - Cherry-pick commit from repository cloned from this one:
+### Statsd extended with Datadog tags
 
-```bash
-   $ git remote add projectB /home/you/projectB
-   $ git fetch projectB
-   $ git cherry-pick <commit from projectB repo>
+```python
+import asyncio
+from asyncstatsd.client import DatadogClient
+
+
+def foo(statsd):
+    statsd.incr('some.counter', tags=dict(tag1='value1', tag2='value2'))
+    statsd.timing('some.timer', 320, tags=dict(tag1='value1', tag2='value2'))
+
+
+async def bar(statsd):
+   statsd.incr('some.counter', tags=dict(tag1='value1', tag2='value2'))
+   statsd.timing('some.timer', 320, tags=dict(tag1='value1', tag2='value2')
+   with statsd.timer('some.timer', tags=dict(tag1='value1', tag2='value2'):
+       await asyncio.sleep(1)
+
+
+async def main():
+    client = DatadogClient('localhost', 8125)
+    await client.connect()
+    foo(client)
+    await bar(client)
+```
+
+## Statsd null client
+
+```python
+import asyncio
+import os
+from asyncstatsd.client import DatadogClient, NullStatsdClient
+
+
+def get_statsd_client():
+    if os.environ.get('STATSD_ENABLED', 'false').lower() == 'true':
+        return DatadogClient('localhost', 8125)
+    else:
+        return NullStatsdClient()
+
+
+def foo():
+    statsd = get_statsd_client()
+    statsd.incr('some.counter', tags=dict(tag1='value1', tag2='value2'))
+    statsd.timing('some.timer', 320, tags=dict(tag1='value1', tag2='value2'))
+
+
+async def bar(statsd):
+    statsd = get_statsd_client()
+    statsd.incr('some.counter', tags=dict(tag1='value1', tag2='value2'))
+    statsd.timing('some.timer', 320, tags=dict(tag1='value1', tag2='value2')
+    with statsd.timer('some.timer', tags=dict(tag1='value1', tag2='value2'):
+        await asyncio.sleep(1)
+
+
+async def main():
+    client = DatadogClient('localhost', 8125)
+    await client.connect()
+    foo()
+    await bar()
 ```
